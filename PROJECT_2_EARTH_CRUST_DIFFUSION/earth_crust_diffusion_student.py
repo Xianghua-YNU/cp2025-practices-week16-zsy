@@ -29,23 +29,24 @@ def solve_earth_crust_diffusion():
     # TODO: 初始化数组
     # TODO: 实现显式差分格式
     # TODO: 返回计算结果
-    tau = 365  # 天
+     tau = 365  # 天
     A = 10.0 + 273.15   # 转换为开尔文
     B = 12.0            # 温度变化幅度保持不变
     D = 0.1    # m²/day⁻¹
     T_bottom = 11.0 + 273.15  # 深度20米处的固定温度转换为开尔文
     depth_max = 20.0  # 最大模拟深度(m)
 
-    # 网格参数
-    n_z = 200  # 深度方向网格点数
-    n_t = 365 * 10  # 时间步数(10年)
+    # 网格参数（调整后的参数）
+    n_z = 400  # 增加深度方向网格点数（减少dz）
+    n_t = 365 * 10 * 10  # 增加时间步数（减少dt），模拟10年，时间步长更小
+
     dz = depth_max / (n_z - 1)  # 深度步长(m)
     dt = tau / (n_t - 1)  # 时间步长(天)
 
     # 稳定性参数检查
     r = D * dt / dz**2
     if r > 0.5:
-        raise ValueError("稳定性参数r超过0.5，模拟可能不稳定")
+        raise ValueError(f"Stability parameter r={r:.4f} exceeds 0.5, simulation may be unstable")
 
     # 初始化深度数组和温度矩阵
     depth_array = np.linspace(0, depth_max, n_z)
@@ -67,22 +68,20 @@ def solve_earth_crust_diffusion():
         for i in range(1, n_z - 1):
             temperature_matrix[i, t] = temperature_matrix[i, t-1] + r * (temperature_matrix[i+1, t-1] - 2 * temperature_matrix[i, t-1] + temperature_matrix[i-1, t-1])
 
-    return depth_array, temperature_matrix
-
 if __name__ == "__main__":
     # 测试代码
     try:
         depth, T = solve_earth_crust_diffusion()
         print(f"计算完成，温度场形状: {T.shape}")
         plt.figure(figsize=(10, 6))
-        seasons = ['春分', '夏至', '秋分', '冬至']  # 四季
+        seasons = ['Vernal Equinox', 'Summer Solstice', 'Autumnal Equinox', 'Winter Solstice'] 
         time_points = [int(365 * 9 + 0), int(365 * 9 + 90), int(365 * 9 + 180), int(365 * 9 + 270)]  # 对应四季的时间点
         for i, time_point in enumerate(time_points):
             plt.plot(T[:, time_point], depth, label=seasons[i])
         
         plt.xlabel('Temperature (K)')  
         plt.ylabel('Depth (m)')
-        plt.title('The crustal temperature varies with depth (第10年四季)')
+        plt.title('The crustal temperature varies with depth (The four seasons of the tenth year)')
         plt.legend()
         plt.grid()
         plt.gca().invert_yaxis()  # 深度轴向下增加
