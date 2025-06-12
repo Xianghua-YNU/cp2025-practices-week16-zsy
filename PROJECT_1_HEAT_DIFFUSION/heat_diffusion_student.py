@@ -27,12 +27,16 @@ def basic_heat_diffusion():
     """
     u = np.zeros((Nx, Nt))
     u[:, 0] = 100  # 初始温度
-    for t in range(1, Nt):
-        for i in range(1, Nx - 1):
-            u[i, t] = u[i, t-1] + D * dt / dx**2 * (u[i+1, t-1] - 2*u[i, t-1] + u[i-1, t-1])
+
+    # 时间步进
+    for j in range(Nt-1):
+        u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
         # 边界条件
-        u[0, t] = 0
-        u[-1, t] = 0
+    u[0, t] = 0
+    u[-1, t] = 0
+    
+    r = D*dt/(dx**2)
+    print(f"任务1 - 稳定性参数 r = {r}")
 
     return u
     
@@ -46,33 +50,39 @@ def analytical_solution(n_terms=100):
     返回:
         np.ndarray: 解析解温度分布
     """
-    x = np.linspace(0, L, Nx)
+    x = np.linspace(0, dx*(Nx-1), Nx)
     t = np.linspace(0, Nt*dt, Nt)
-    X, T = np.meshgrid(x, t, indexing='ij')
+    x, t = np.meshgrid(x, t)
 
-    u_analytical = np.zeros((Nx, Nt))
-    for n in range(1, n_terms + 1):
-        kn = n * np.pi
-        term = (200 / (n * np.pi)) * np.sin(kn * X) * np.exp(-kn**2 * D * T)
-        u_analytical += term
-
-    return u_analytical
+    s = 0
+    for i in range(n_terms):
+        j = 2*i + 1
+        s += 400/(j*np.pi) * np.sin(j*np.pi*x/L) * np.exp(-(j*np.pi/L)**2 * t * D)
+    return s.T
 
 def stability_analysis():
     """
     任务3: 数值解稳定性分析
     """
-    dt_values = [0.25, 0.5]  # 时间步长
-    stability = []
+    dx = 0.01
+    dt = 0.6  # 使r>0.5
+    r = D*dt/(dx**2)
+    print(f"任务3 - 稳定性参数 r = {r} (r>0.5)")
+    
+    Nx = int(L/dx) + 1
+    Nt = 2000
+    
+    u = np.zeros((Nx, Nt))
+    u[:, 0] = 100
+    u[0, :] = 0
+    u[-1, :] = 0
+    
+    for j in range(Nt-1):
+        u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
+    
+    # 可视化不稳定解
+    plot_3d_solution(u, dx, dt, Nt, title='Task 3: Unstable Solution (r>0.5)')
 
-    for dt_val in dt_values:
-        r = D * dt_val / dx**2
-        if r <= 0.5:
-            stability.append("稳定")
-        else:
-            stability.append("不稳定")
-
-    return stability
 
 def different_initial_condition():
     """
@@ -81,36 +91,49 @@ def different_initial_condition():
     返回:
         np.ndarray: 温度分布数组
     """
+    dx = 0.01
+    dt = 0.5
+    r = D*dt/(dx**2)
+    print(f"任务4 - 稳定性参数 r = {r}")
+    
+    Nx = int(L/dx) + 1
+    Nt = 1000
+    
     u = np.zeros((Nx, Nt))
-    x = np.linspace(0, L, Nx)
-    u[:, 0] = np.where(x < 0.5, 100, 50)  # 左边初始温度100K, 右边初始温度50K
-
-    for t in range(1, Nt):
-        for i in range(1, Nx - 1):
-            u[i, t] = u[i, t-1] + D * dt / dx**2 * (u[i+1, t-1] - 2*u[i, t-1] + u[i-1, t-1])
-        # 边界条件
-        u[0, t] = 0
-        u[-1, t] = 0
-
+    u[:51, 0] = 100  # 左半部分初始温度100K
+    u[50:, 0] = 50   # 右半部分初始温度50K
+    u[0, :] = 0
+    u[-1, :] = 0
+    
+    for j in range(Nt-1):
+        u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
+    
+    # 可视化
+    plot_3d_solution(u, dx, dt, Nt, title='Task 4: Temperature Evolution with Different Initial Conditions')
     return u
+
 
 def heat_diffusion_with_cooling():
     """
     任务5: 包含牛顿冷却定律的热传导
     """
-    h = 0.01  # 冷却系数 (s^-1)
+    r = D*dt/(dx**2)
+    h = 0.1  # 冷却系数
+    print(f"任务5 - 稳定性参数 r = {r}, 冷却系数 h = {h}")
+    
+    Nx = int(L/dx) + 1
+    Nt = 100
+    
     u = np.zeros((Nx, Nt))
-    u[:, 0] = 100  # 初始温度
-
-    for t in range(1, Nt):
-        for i in range(1, Nx - 1):
-            cooling_term = h * dt * (0 - u[i, t-1])  # 牛顿冷却项
-            u[i, t] = u[i, t-1] + D * dt / dx**2 * (u[i+1, t-1] - 2*u[i, t-1] + u[i-1, t-1]) + cooling_term
-        # 边界条件
-        u[0, t] = 0
-        u[-1, t] = 0
-
-    return u
+    u[:, 0] = 100
+    u[0, :] = 0
+    u[-1, :] = 0
+    
+    for j in range(Nt-1):
+        u[1:-1, j+1] = (1-2*r-h*dt)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
+    
+    # 可视化
+    plot_3d_solution(u, dx, dt, Nt, title='Task 5: Heat Diffusion with Newton Cooling')
 
 def plot_3d_solution(u, dx, dt, Nt, title):
     """
@@ -137,9 +160,9 @@ def plot_3d_solution(u, dx, dt, Nt, title):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
     surf = ax.plot_surface(X, T, u, cmap='hot')
-    ax.set_xlabel('位置 (m)')
-    ax.set_ylabel('时间 (s)')
-    ax.set_zlabel('温度 (K)')
+    ax.set_xlabel('Location (m)')
+    ax.set_ylabel('Time (s)')
+    ax.set_zlabel('Temperature (K)')
     ax.set_title(title)
     fig.colorbar(surf)
     
@@ -164,15 +187,23 @@ if __name__ == "__main__":
     print("=== 基本热传导模拟 ===")
     u_basic = basic_heat_diffusion()
     plot_3d_solution(u_basic, dx, dt, Nt, "基本热传导模拟")
+
+    # 任务2: 解析解计算
     print("=== 解析解计算 ===")
     u_analytical = analytical_solution()
     plot_3d_solution(u_analytical, dx, dt, Nt, "解析解计算")
+
+    # 任务3: 数值解稳定性分析
     print("=== 数值解稳定性分析 ===")
     stability = stability_analysis()
     print(f"时间步长0.25s: {stability[0]}, 时间步长0.5s: {stability[1]}")
+
+    # 任务4: 不同初始条件模拟
     print("=== 不同初始条件模拟 ===")
     u_diff_initial = different_initial_condition()
     plot_3d_solution(u_diff_initial, dx, dt, Nt, "不同初始条件模拟")
+
+    # 任务5: 包含冷却效应的热传导
     print("=== 包含冷却效应的热传导 ===")
     u_cooling = heat_diffusion_with_cooling()
     plot_3d_solution(u_cooling, dx, dt, Nt, "包含冷却效应的热传导")
