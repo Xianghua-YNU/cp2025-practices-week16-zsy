@@ -140,9 +140,9 @@ def plot_3d_solution(u, dx, dt, Nt, title):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
     surf = ax.plot_surface(X, T, u, cmap='hot')
-    ax.set_xlabel('Location (m)')
-    ax.set_ylabel('Time (s)')
-    ax.set_zlabel('Temperature (K)')
+    ax.set_xlabel('Position x (m)')
+    ax.set_ylabel('Time t (s)')
+    ax.set_zlabel('Temperature T (K)')
     ax.set_title(title)
     fig.colorbar(surf)
     
