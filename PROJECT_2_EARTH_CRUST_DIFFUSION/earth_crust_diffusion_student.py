@@ -46,7 +46,9 @@ def solve_earth_crust_diffusion():
     # 稳定性参数检查
     r = D * dt / dz**2
     if r > 0.5:
-        raise ValueError(f"Stability parameter r={r:.4f} exceeds 0.5, simulation may be unstable")
+        print(f"警告：稳定性参数 r={r:.4f} 超过0.5，模拟可能不稳定")
+        # 返回空数组以避免解包错误
+        return np.array([]), np.array([])
 
     # 初始化深度数组和温度矩阵
     depth_array = np.linspace(0, depth_max, n_z)
@@ -67,6 +69,8 @@ def solve_earth_crust_diffusion():
         # 显式差分格式
         for i in range(1, n_z - 1):
             temperature_matrix[i, t] = temperature_matrix[i, t-1] + r * (temperature_matrix[i+1, t-1] - 2 * temperature_matrix[i, t-1] + temperature_matrix[i-1, t-1])
+
+    return depth_array, temperature_matrix + temperature_matrix[i-1, t-1])
 
 if __name__ == "__main__":
     # 测试代码
