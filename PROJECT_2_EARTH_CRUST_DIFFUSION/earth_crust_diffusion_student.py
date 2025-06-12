@@ -29,7 +29,7 @@ def solve_earth_crust_diffusion():
     # TODO: 初始化数组
     # TODO: 实现显式差分格式
     # TODO: 返回计算结果
-     tau = 365  # 天
+    tau = 365  # 天
     A = 10.0 + 273.15   # 转换为开尔文
     B = 12.0            # 温度变化幅度保持不变
     D = 0.1    # m²/day⁻¹
