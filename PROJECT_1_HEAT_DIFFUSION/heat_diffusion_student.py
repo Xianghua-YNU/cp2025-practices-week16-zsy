@@ -166,12 +166,12 @@ if __name__ == "__main__":
     """
     print("=== 基本热传导模拟 ===")
     u_basic = basic_heat_diffusion()
-    plot_3d_solution(u_basic, dx, dt, Nt, "基本热传导模拟")
+    plot_3d_solution(u_basic, dx, dt, Nt, "Task 1: Heat Diffusion Solution")
 
     # 任务2: 解析解计算
     print("=== 解析解计算 ===")
     u_analytical = analytical_solution()
-    plot_3d_solution(u_analytical, dx, dt, Nt, "解析解计算")
+    plot_3d_solution(u_analytical, dx, dt, Nt, "Analytical Solution")
 
     # 任务3: 数值解稳定性分析
     print("=== 数值解稳定性分析 ===")
@@ -181,12 +181,12 @@ if __name__ == "__main__":
     # 任务4: 不同初始条件模拟
     print("=== 不同初始条件模拟 ===")
     u_diff_initial = different_initial_condition()
-    plot_3d_solution(u_diff_initial, dx, dt, Nt, "不同初始条件模拟")
+    plot_3d_solution(u_diff_initial, dx, dt, Nt, "Task 4: Temperature Evolution with Different Initial Conditions")
 
     # 任务5: 包含冷却效应的热传导
     print("=== 包含冷却效应的热传导 ===")
     u_cooling = heat_diffusion_with_cooling()
-    plot_3d_solution(u_cooling, dx, dt, Nt, "包含冷却效应的热传导")
+    plot_3d_solution(u_cooling, dx, dt, Nt, "Task 5: Heat Diffusion with Newton Cooling")
     
     print("=== 铝棒热传导问题学生实现 ===")
     print("请先实现各任务函数后再运行主程序")
