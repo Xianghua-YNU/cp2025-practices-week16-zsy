@@ -72,9 +72,7 @@ def stability_analysis():
         u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
     
 
-    print("=== 数值解稳定性分析 ===")
-    stability = stability_analysis()
-    print(f"时间步长0.25s: {stability[0]}, 时间步长0.5s: {stability[1]}")
+    plot_3d_solution(u, dx, dt, Nt, title='Task 3: Unstable Solution (r>0.5)')
 
 def different_initial_condition():
     """
@@ -100,10 +98,7 @@ def different_initial_condition():
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
 
-    print("=== 不同初始条件模拟 ===")
-    u_diff_initial = different_initial_condition()
-    plot_3d_solution(u_diff_initial, dx, dt, Nt, "Task 4: Temperature Evolution with Different Initial Conditions")
-
+    plot_3d_solution(u, dx, dt, Nt, title='Task 4: Temperature Evolution with Different Initial Conditions')
     return u
 
 
@@ -126,10 +121,7 @@ def heat_diffusion_with_cooling():
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r-h*dt)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
         
-    print("=== 包含冷却效应的热传导 ===")
-    u_cooling = heat_diffusion_with_cooling()
-    plot_3d_solution(u_cooling, dx, dt, Nt, "Task 5: Heat Diffusion with Newton Cooling")
-    return u
+    plot_3d_solution(u, dx, dt, Nt, title='Task 5: Heat Diffusion with Newton Cooling')
     
 def plot_3d_solution(u, dx, dt, Nt, title):
     """
