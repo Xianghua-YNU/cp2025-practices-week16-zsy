@@ -6,6 +6,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+tau = 365  # 天
+A = 10.0 + 273.15   # 转换为开尔文
+B = 12.0            # 温度变化幅度保持不变
+D = 0.1    # m²/day⁻¹
+T_bottom = 11.0 + 273.15 
+T_initial = 10.0 + 273.15                          # 深度20米处的固定温度转换为开尔文
+depth_max = 20.0  # 最大模拟深度(m)
+
 def solve_earth_crust_diffusion():
     """
     实现显式差分法求解地壳热扩散问题
@@ -29,48 +38,33 @@ def solve_earth_crust_diffusion():
     # TODO: 初始化数组
     # TODO: 实现显式差分格式
     # TODO: 返回计算结果
-    tau = 365  # 天
-    A = 10.0 + 273.15   # 转换为开尔文
-    B = 12.0            # 温度变化幅度保持不变
-    D = 0.1    # m²/day⁻¹
-    T_bottom = 11.0 + 273.15  # 深度20米处的固定温度转换为开尔文
-    depth_max = 20.0  # 最大模拟深度(m)
 
     # 网格参数（调整后的参数）
     n_z = 400  # 增加深度方向网格点数（减少dz）
     n_t = 365 * 10 * 10  # 增加时间步数（减少dt），模拟10年，时间步长更小
 
-    dz = depth_max / (n_z - 1)  # 深度步长(m)
-    dt = tau / (n_t - 1)  # 时间步长(天)
-
     # 稳定性参数检查
-    r = D * dt / dz**2
-    if r > 0.5:
-        print(f"警告：稳定性参数 r={r:.4f} 超过0.5，模拟可能不稳定")
-        # 返回空数组以避免解包错误
-        return np.array([]), np.array([])
+    r = h * D / a**2
+    print(f"稳定性参数 r = {r:.4f}")
 
-    # 初始化深度数组和温度矩阵
-    depth_array = np.linspace(0, depth_max, n_z)
-    temperature_matrix = np.zeros((n_z, n_t))
+    temperature_matrix = np.zeros((n_z, n_t)) + T_initial
 
     # 初始温度场(地表以下20米全年温度近似为11°C，转换为开尔文)
-    temperature_matrix[:, 0] = T_bottom
+    temperature_matrix[-1, 0] = T_bottom
 
     # 时间循环
-    for t in range(1, n_t):
+    for t in range(years):
         time = t * dt  # 当前时间(天)
         # 地表温度(时变边界条件)
-        T_surface = A + B * np.sin(2 * np.pi * time / tau)
+        T[0, j] = A + B * np.sin(2 * np.pi * j / tau)
         # 应用上边界条件
         temperature_matrix[0, t] = T_surface
-        # 应用下边界条件(固定温度)
-        temperature_matrix[-1, t] = T_bottom
-        # 显式差分格式
-        for i in range(1, n_z - 1):
-            temperature_matrix[i, t] = temperature_matrix[i, t-1] + r * (temperature_matrix[i+1, t-1] - 2 * temperature_matrix[i, t-1] + temperature_matrix[i-1, t-1])
+        T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T[1:-1, j])
+        
+    depth_array = np.arange(0, DEPTH_MAX + h, h)
+    
+    return depth, T
 
-    return depth_array, temperature_matrix + temperature_matrix[i-1, t-1])
 
 if __name__ == "__main__":
     # 测试代码
