@@ -63,7 +63,7 @@ def solve_earth_crust_diffusion():
 
 
 def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
-     plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(10, 8))
     
     # 绘制各季节的温度轮廓
     for i, day in enumerate(seasons):
