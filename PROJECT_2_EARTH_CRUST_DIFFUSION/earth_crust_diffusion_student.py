@@ -43,18 +43,18 @@ def solve_earth_crust_diffusion():
     r = h * D / a**2
     print(f"稳定性参数 r = {r:.4f}")
 
-    temperature_matrix = np.zeros((n_z, n_t)) + T_initial
+    T = np.zeros((n_z, n_t)) + T_initial
 
     # 初始温度场(地表以下20米全年温度近似为11°C，转换为开尔文)
-    temperature_matrix[-1, 0] = T_bottom
+    T [-1, 0] = T_bottom
 
     # 时间循环
     for year in range(years):
         for j in range(1, N-1):
         # 地表温度(时变边界条件)
-             temperature_matrix[0, j] = A + B * np.sin(2 * np.pi * j / tau)
+             T [0, j] = A + B * np.sin(2 * np.pi * j / tau)
         # 应用上边界条件
-             temperature_matrix[1:-1, j+1] = temperature_matrix[1:-1, j] + r * (temperature_matrix[2:, j] + temperature_matrix[:-2, j] - 2*temperature_matrix[1:-1, j])
+             T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T [1:-1, j])
         
     depth_array = np.arange(0, DEPTH_MAX + h, h)
     
@@ -69,12 +69,11 @@ def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
     for i, day in enumerate(seasons):
         plt.plot(depth, temperature[:, day], 
                 label=f'Day {day}', linewidth=2)
-    plt.xlabel('Temperature (K)')  
-    plt.ylabel('Depth (m)')
-    plt.title('The crustal temperature varies with depth (The four seasons of the tenth year)')
+    plt.xlabel('Depth (m)')
+    plt.ylabel('Temperature (K)')
+    plt.title('Seasonal Temperature Profiles')
     plt.legend()
-    plt.grid()
-    plt.gca().invert_yaxis()  # 深度轴向下增加
+    plt.grid(True)
     plt.savefig('seasonal_temperature_profile.png')  # 保存为PNG文件
     plt.show()
 
