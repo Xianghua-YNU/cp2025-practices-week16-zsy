@@ -62,7 +62,15 @@ def solve_earth_crust_diffusion():
     return depth, T
 
 
-def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
+def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365]):
+    """
+    绘制季节性温度轮廓
+    
+    参数:
+        depth (ndarray): 深度数组
+        temperature (ndarray): 温度矩阵
+        seasons (list): 季节时间点 (days)
+    """
     plt.figure(figsize=(10, 8))
     
     # 绘制各季节的温度轮廓
@@ -78,9 +86,10 @@ def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
     plt.show()
 
 if __name__ == "__main__":
+    # 运行模拟
     depth, T = solve_earth_crust_diffusion()
     
+    # 绘制季节性温度轮廓
     plot_seasonal_profiles(depth, T)
-
 
         
