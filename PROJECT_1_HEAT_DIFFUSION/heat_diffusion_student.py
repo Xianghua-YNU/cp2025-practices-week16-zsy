@@ -32,10 +32,12 @@ def basic_heat_diffusion():
     u[:, 0] = 100
     u[0, :] = 0
     u[-1, :] = 0
+    
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
-
+    
     return u
+
     
 def analytical_solution(n_terms=100):
     """
@@ -51,7 +53,6 @@ def analytical_solution(n_terms=100):
     t = np.linspace(0, dt*Nt, Nt)
     x, t = np.meshgrid(x, t)
     s = 0
-    u_analytical = np.zeros((Nx, Nt))
     for i in range(n_terms):
         j = 2*i + 1
         s += 400/(j*np.pi) * np.sin(j*np.pi*x/L) * np.exp(-(j*np.pi/L)**2 * t * D)
@@ -128,6 +129,7 @@ def heat_diffusion_with_cooling():
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r-h*dt)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
     
+    # 可视化
     plot_3d_solution(u, dx, dt, Nt, title='Task 5: Heat Diffusion with Newton Cooling')
     
 def plot_3d_solution(u, dx, dt, Nt, title):
@@ -155,14 +157,11 @@ def plot_3d_solution(u, dx, dt, Nt, title):
     
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(X, T, u, cmap='hot')
+    ax.plot_surface(X, T, u.T, cmap='rainbow')
     ax.set_xlabel('Position x (m)')
     ax.set_ylabel('Time t (s)')
     ax.set_zlabel('Temperature T (K)')
     ax.set_title(title)
-    fig.colorbar(surf)
-    
-    # 保存为PNG文件
     plt.savefig(f"{title}.png")
     plt.show()
 
