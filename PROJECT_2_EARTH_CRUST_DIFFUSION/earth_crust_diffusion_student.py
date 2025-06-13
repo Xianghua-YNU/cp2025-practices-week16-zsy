@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-tau = 365  # 天
+TAU = 365  # 天
 A = 10.0  # 年平均地表温度 (°C)
 B = 12.0  # 地表温度振幅 (°C)
 D = 0.1    # m²/day⁻¹
@@ -52,7 +52,7 @@ def solve_earth_crust_diffusion():
     for year in range(years):
         for j in range(1, N-1):
         # 地表温度(时变边界条件)
-             T [0, j] = A + B * np.sin(2 * np.pi * j / tau)
+             T [0, j] = A + B * np.sin(2 * np.pi * j / TAU)
         # 应用上边界条件
              T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T [1:-1, j])
         
