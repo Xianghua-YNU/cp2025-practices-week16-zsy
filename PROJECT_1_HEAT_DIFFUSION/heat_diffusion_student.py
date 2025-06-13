@@ -103,7 +103,8 @@ def different_initial_condition():
     
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
-
+    
+    # 可视化
     plot_3d_solution(u, dx, dt, Nt, title='Task 4: Temperature Evolution with Different Initial Conditions')
     return u
 
@@ -126,7 +127,7 @@ def heat_diffusion_with_cooling():
     
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r-h*dt)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
-        
+    
     plot_3d_solution(u, dx, dt, Nt, title='Task 5: Heat Diffusion with Newton Cooling')
     
 def plot_3d_solution(u, dx, dt, Nt, title):
@@ -147,6 +148,7 @@ def plot_3d_solution(u, dx, dt, Nt, title):
         >>> u = np.zeros((100, 200))
         >>> plot_3d_solution(u, 0.01, 0.5, 200, "示例")
     """
+    Nx = u.shape[0]
     x = np.linspace(0, dx*(Nx-1), Nx)
     t = np.linspace(0, dt*Nt, Nt)
     X, T = np.meshgrid(x, t)
