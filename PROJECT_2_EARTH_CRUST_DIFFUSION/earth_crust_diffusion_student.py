@@ -42,23 +42,25 @@ def solve_earth_crust_diffusion():
     # 稳定性参数检查
     r = h * D / a**2
     print(f"稳定性参数 r = {r:.4f}")
-
-    T = np.zeros((n_z, n_t)) + T_initial
-
-    # 初始温度场(地表以下20米全年温度近似为11°C，转换为开尔文)
-    T [-1, 0] = T_bottom
-
-    # 时间循环
+    
+    # 初始化温度矩阵
+    T = np.zeros((M, N)) + T_INITIAL
+    T[-1, :] = T_BOTTOM  # 底部边界条件
+    
+    # 时间步进循环
     for year in range(years):
         for j in range(1, N-1):
-        # 地表温度(时变边界条件)
-             T [0, j] = A + B * np.sin(2 * np.pi * j / TAU)
-        # 应用上边界条件
-             T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T [1:-1, j])
-        
-    depth_array = np.arange(0, DEPTH_MAX + h, h)
+            # 地表边界条件
+            T[0, j] = A + B * np.sin(2 * np.pi * j / TAU)
+            
+            # 显式差分格式
+            T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T[1:-1, j])
+    
+    # 创建深度数组
+    depth = np.arange(0, DEPTH_MAX + h, h)
     
     return depth, T
+
 
 def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
      plt.figure(figsize=(10, 8))
@@ -70,13 +72,15 @@ def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
     plt.xlabel('Depth (m)')
     plt.ylabel('Temperature (°C)')
     plt.title('Seasonal Temperature Profiles')
-    plt.legend()
     plt.grid(True)
+    plt.legend()
     plt.savefig('seasonal_temperature_profile.png')  # 保存为PNG文件
     plt.show()
 
 if __name__ == "__main__":
-        depth, T = solve_earth_crust_diffusion()
-        plot_seasonal_profiles(depth, T)
-        
+    depth, T = solve_earth_crust_diffusion()
+    
+    plot_seasonal_profiles(depth, T)
+
+
         
