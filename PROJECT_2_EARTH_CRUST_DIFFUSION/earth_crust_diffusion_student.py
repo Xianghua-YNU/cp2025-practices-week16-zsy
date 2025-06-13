@@ -49,13 +49,12 @@ def solve_earth_crust_diffusion():
     temperature_matrix[-1, 0] = T_bottom
 
     # 时间循环
-    for t in range(years):
-        time = t * dt  # 当前时间(天)
+    for year in range(years):
+        for j in range(1, N-1):
         # 地表温度(时变边界条件)
-        temperature_matrix[0, j] = A + B * np.sin(2 * np.pi * j / tau)
+             temperature_matrix[0, j] = A + B * np.sin(2 * np.pi * j / tau)
         # 应用上边界条件
-        temperature_matrix[0, t] = T_surface
-        temperature_matrix[1:-1, j+1] = temperature_matrix[1:-1, j] + r * (temperature_matrix[2:, j] + temperature_matrix[:-2, j] - 2*temperature_matrix[1:-1, j])
+             temperature_matrix[1:-1, j+1] = temperature_matrix[1:-1, j] + r * (temperature_matrix[2:, j] + temperature_matrix[:-2, j] - 2*temperature_matrix[1:-1, j])
         
     depth_array = np.arange(0, DEPTH_MAX + h, h)
     
