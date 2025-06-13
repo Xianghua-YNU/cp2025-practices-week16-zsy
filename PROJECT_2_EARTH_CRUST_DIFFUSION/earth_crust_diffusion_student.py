@@ -67,6 +67,10 @@ def solve_earth_crust_diffusion():
 
 def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
     plt.figure(figsize=(10, 8))
+    
+    seasons = ['Vernal Equinox', 'Summer Solstice', 'Autumnal Equinox', 'Winter Solstice'] 
+        time_points = [int(365 * 9 + 0), int(365 * 9 + 90), int(365 * 9 + 180), int(365 * 9 + 270)]  # 对应四季的时间点
+
     for i, day in enumerate(seasons):
         plt.plot(depth, temperature[:, day], 
                 label=f'Day {day}', linewidth=2)
@@ -84,12 +88,5 @@ if __name__ == "__main__":
     try:
         depth, T = solve_earth_crust_diffusion()
         print(f"计算完成，温度场形状: {T.shape}")
-        plt.figure(figsize=(10, 6))
-        seasons = ['Vernal Equinox', 'Summer Solstice', 'Autumnal Equinox', 'Winter Solstice'] 
-        time_points = [int(365 * 9 + 0), int(365 * 9 + 90), int(365 * 9 + 180), int(365 * 9 + 270)]  # 对应四季的时间点
-        for i, time_point in enumerate(time_points):
-            plt.plot(T[:, time_point], depth, label=seasons[i])
         
         
-    except NotImplementedError as e:
-        print(e)
