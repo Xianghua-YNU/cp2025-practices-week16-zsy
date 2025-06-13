@@ -61,17 +61,23 @@ def stability_analysis():
     """
     任务3: 数值解稳定性分析
     """
+    dx = 0.01
+    dt = 0.6  # 使r>0.5
+    r = D*dt/(dx**2)
+    print(f"任务3 - 稳定性参数 r = {r} (r>0.5)")
+    
     Nx = int(L/dx) + 1
     Nt = 2000
-    dx = 0.01
-    dt = 0.6
-    r = D * dt_val / dx**2
-    print(f"任务3 - 稳定性参数 r = {r} (r>0.5)")
-
+    
+    u = np.zeros((Nx, Nt))
+    u[:, 0] = 100
+    u[0, :] = 0
+    u[-1, :] = 0
+    
     for j in range(Nt-1):
         u[1:-1, j+1] = (1-2*r)*u[1:-1, j] + r*(u[2:, j] + u[:-2, j])
     
-
+    # 可视化不稳定解
     plot_3d_solution(u, dx, dt, Nt, title='Task 3: Unstable Solution (r>0.5)')
 
 def different_initial_condition():
