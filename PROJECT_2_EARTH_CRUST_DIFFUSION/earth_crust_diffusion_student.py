@@ -68,7 +68,7 @@ def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
         plt.plot(depth, temperature[:, day], 
                 label=f'Day {day}', linewidth=2)
     plt.xlabel('Depth (m)')
-    plt.ylabel('Temperature (K)')
+    plt.ylabel('Temperature (°C)')
     plt.title('Seasonal Temperature Profiles')
     plt.legend()
     plt.grid(True)
