@@ -40,6 +40,14 @@ def solve_earth_crust_diffusion():
     # TODO: 返回计算结果
 
     # 稳定性参数检查
+    h = 1.0  # 空间步长（m）
+    dt = 1.0  # 时间步长（day）
+    years = 1  # 模拟年数
+    days = int(TAU * years)  # 总天数
+
+    # 计算网格点数
+    M = int(DEPTHS_MAX / h) + 1  # 深度方向网格点数
+    N = days + 1
     r = h * D / a**2
     print(f"稳定性参数 r = {r:.4f}")
     
@@ -48,19 +56,18 @@ def solve_earth_crust_diffusion():
     T[-1, :] = T_BOTTOM  # 底部边界条件
     
     # 时间步进循环
-    for year in range(years):
-        for j in range(1, N-1):
-            # 地表边界条件
-            T[0, j] = A + B * np.sin(2 * np.pi * j / TAU)
-            
-            # 显式差分格式
-            T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T[1:-1, j])
-    
-    # 创建深度数组
-    depth = np.arange(0, DEPTH_MAX + h, h)
-    
-    return depth, T
+    for j in range(N):
+        T[0, j] = A + B * np.sin(2 * np.pi * j / TAU)
 
+    # 显式差分格式
+    for j in range(0, N-1):
+        for i in range(1, M-1):
+            T[i, j+1] = T[i, j] + r * (T[i+1, j] + T[i-1, j] - 2*T[i, j])
+
+    # 创建深度数组
+    depth = np.arange(0, DEPTHS_MAX + h, h)
+
+    return depth, T
 
 def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365]):
     """
