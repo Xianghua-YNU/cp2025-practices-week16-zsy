@@ -65,6 +65,19 @@ def solve_earth_crust_diffusion():
     
     return depth, T
 
+def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365])
+    plt.figure(figsize=(10, 8))
+    for i, day in enumerate(seasons):
+        plt.plot(depth, temperature[:, day], 
+                label=f'Day {day}', linewidth=2)
+    plt.xlabel('Temperature (K)')  
+    plt.ylabel('Depth (m)')
+    plt.title('The crustal temperature varies with depth (The four seasons of the tenth year)')
+    plt.legend()
+    plt.grid()
+    plt.gca().invert_yaxis()  # 深度轴向下增加
+    plt.savefig('seasonal_temperature_profile.png')  # 保存为PNG文件
+    plt.show()
 
 if __name__ == "__main__":
     # 测试代码
@@ -77,13 +90,6 @@ if __name__ == "__main__":
         for i, time_point in enumerate(time_points):
             plt.plot(T[:, time_point], depth, label=seasons[i])
         
-        plt.xlabel('Temperature (K)')  
-        plt.ylabel('Depth (m)')
-        plt.title('The crustal temperature varies with depth (The four seasons of the tenth year)')
-        plt.legend()
-        plt.grid()
-        plt.gca().invert_yaxis()  # 深度轴向下增加
-        plt.savefig('seasonal_temperature_profile.png')  # 保存为PNG文件
-        plt.show()
+        
     except NotImplementedError as e:
         print(e)
