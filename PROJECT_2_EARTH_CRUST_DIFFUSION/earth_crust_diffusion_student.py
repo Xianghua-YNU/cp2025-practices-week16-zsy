@@ -39,10 +39,6 @@ def solve_earth_crust_diffusion():
     # TODO: 实现显式差分格式
     # TODO: 返回计算结果
 
-    # 网格参数（调整后的参数）
-    n_z = 400  # 增加深度方向网格点数（减少dz）
-    n_t = 365 * 10 * 10  # 增加时间步数（减少dt），模拟10年，时间步长更小
-
     # 稳定性参数检查
     r = h * D / a**2
     print(f"稳定性参数 r = {r:.4f}")
@@ -56,10 +52,10 @@ def solve_earth_crust_diffusion():
     for t in range(years):
         time = t * dt  # 当前时间(天)
         # 地表温度(时变边界条件)
-        T[0, j] = A + B * np.sin(2 * np.pi * j / tau)
+        temperature_matrix[0, j] = A + B * np.sin(2 * np.pi * j / tau)
         # 应用上边界条件
         temperature_matrix[0, t] = T_surface
-        T[1:-1, j+1] = T[1:-1, j] + r * (T[2:, j] + T[:-2, j] - 2*T[1:-1, j])
+        temperature_matrix[1:-1, j+1] = temperature_matrix[1:-1, j] + r * (temperature_matrix[2:, j] + temperature_matrix[:-2, j] - 2*temperature_matrix[1:-1, j])
         
     depth_array = np.arange(0, DEPTH_MAX + h, h)
     
