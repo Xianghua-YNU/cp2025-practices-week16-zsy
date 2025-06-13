@@ -82,7 +82,7 @@ def plot_seasonal_profiles(depth, temperature, seasons=[90, 180, 270, 365]):
     plt.title('Seasonal Temperature Profiles')
     plt.grid(True)
     plt.legend()
-    plt.savefig('seasonal_temperature_profile.png')  # 保存为PNG文件
+
     plt.show()
 
 if __name__ == "__main__":
